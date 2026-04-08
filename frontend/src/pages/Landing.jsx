@@ -16,8 +16,15 @@ export default function Landing() {
         {/* Logo */}
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 flex items-center justify-center shadow-2xl glow-brand">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2v4" />
+              <circle cx="12" cy="2" r="1.5" fill="white" stroke="none" />
+              <rect x="3" y="6" width="18" height="14" rx="4" />
+              <circle cx="8" cy="12" r="1.5" fill="white" stroke="none" />
+              <circle cx="16" cy="12" r="1.5" fill="white" stroke="none" />
+              <path d="M10 16h4" />
+              <path d="M1 12h2" />
+              <path d="M21 12h2" />
             </svg>
           </div>
           <div className="text-left">
@@ -34,7 +41,7 @@ export default function Landing() {
 
         <p className="text-lg text-gray-400 mb-10 max-w-xl mx-auto leading-relaxed">
           AI-powered hook scoring, tweet-level engagement drop-off analysis, and sentiment-aware 
-          response strategies — built for serious X creators.
+          response strategies — built for serious Reddit creators.
         </p>
 
         {/* Feature pills */}
@@ -43,8 +50,8 @@ export default function Landing() {
             { icon: '🎯', label: 'Hook Scoring' },
             { icon: '📊', label: 'Drop-off Analysis' },
             { icon: '🛡️', label: 'Comment Defense' },
-            { icon: '🤖', label: 'Claude AI' },
-            { icon: '🔬', label: 'Detoxify NLP' },
+            { icon: '🤖', label: 'Gemini AI' },
+            { icon: '🔬', label: 'Advanced NLP' },
           ].map(f => (
             <span key={f.label} className="glass-card px-4 py-2 text-sm text-gray-300 flex items-center gap-2">
               <span>{f.icon}</span>
@@ -89,7 +96,7 @@ export default function Landing() {
           {
             icon: '🛡️',
             title: 'Comment Defense',
-            desc: 'Detoxify pipeline → category mapping → strategy engine → Claude generates tone-aware replies.',
+            desc: 'NLP pipeline → category mapping → strategy engine → Gemini generates tone-aware replies.',
           },
         ].map(f => (
           <div key={f.title} className="glass-card p-6">

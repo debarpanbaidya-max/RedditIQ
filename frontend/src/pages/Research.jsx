@@ -22,6 +22,16 @@ export default function Research() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Top Explanation */}
+      <div className="glass-card p-6 border-brand-500/30 shadow-lg shadow-brand-500/5">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">
+          <span className="text-2xl">🔍</span> What is the Research Engine?
+        </h2>
+        <p className="text-gray-300 mt-2 text-sm leading-relaxed">
+          The Research Engine allows you to enter any topic and your preferred stance. It pulls trending discussions and context from Reddit, then uses Gemini AI to generate highly engaging, scored hooks and a thread blueprint that you can use to start a viral discussion.
+        </p>
+      </div>
+
       {/* Input Card */}
       <div className="glass-card p-6">
         <h2 className="text-base font-semibold text-white mb-1">Topic Research</h2>

@@ -40,11 +40,21 @@ export default function Defense() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Top Explanation */}
+      <div className="glass-card p-6 border-violet-500/30 shadow-lg shadow-violet-500/5">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">
+          <span className="text-2xl">🛡️</span> What is Comment Defense?
+        </h2>
+        <p className="text-gray-300 mt-2 text-sm leading-relaxed">
+          The Comment Defense System protects your brand during heated discussions. Paste toxic or challenging comments here, and our NLP pipeline will categorize the hostility, map out the best response strategy (Ignore, Defend, Respond), and use Gemini AI to generate perfectly toned replies.
+        </p>
+      </div>
+
       {/* Input Card */}
       <div className="glass-card p-6">
         <h2 className="text-base font-semibold text-white mb-1">Comment Defense System</h2>
         <p className="text-xs text-gray-500 mb-5">
-          Paste comments below. We'll run Detoxify NLP to detect toxicity, map to a strategy, and generate Claude reply options.
+          Paste comments below. We'll run the NLP pipeline to detect toxicity, map to a strategy, and generate Gemini reply options.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -124,7 +134,7 @@ export default function Defense() {
               {defenseLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Running Detoxify...
+                  Running Analysis...
                 </>
               ) : (
                 <>
@@ -177,7 +187,7 @@ export default function Defense() {
       {!defenseResults && !defenseLoading && (
         <div className="glass-card p-12 text-center">
           <div className="text-5xl mb-4">🛡️</div>
-          <p className="text-gray-400 text-sm">Add comments above to run the Detoxify NLP pipeline and get strategy + reply options.</p>
+          <p className="text-gray-400 text-sm">Add comments above to run the NLP pipeline and get strategy + reply options.</p>
         </div>
       )}
     </div>

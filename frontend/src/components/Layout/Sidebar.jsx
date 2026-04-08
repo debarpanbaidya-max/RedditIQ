@@ -39,8 +39,15 @@ export default function Sidebar() {
       <div className="px-6 py-6 border-b border-white/5">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-violet-500 flex items-center justify-center glow-brand">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2v4" />
+              <circle cx="12" cy="2" r="1.5" fill="white" stroke="none" />
+              <rect x="3" y="6" width="18" height="14" rx="4" />
+              <circle cx="8" cy="12" r="1.5" fill="white" stroke="none" />
+              <circle cx="16" cy="12" r="1.5" fill="white" stroke="none" />
+              <path d="M10 16h4" />
+              <path d="M1 12h2" />
+              <path d="M21 12h2" />
             </svg>
           </div>
           <div>
@@ -71,7 +78,7 @@ export default function Sidebar() {
       <div className="px-3 py-4 border-t border-white/5">
         <div className="glass-card px-3 py-3">
           <p className="text-xs text-gray-500 text-center">
-            Powered by <span className="text-brand-400 font-medium">Claude AI</span> + <span className="text-cyan-400 font-medium">Detoxify</span>
+            Powered by <span className="text-brand-400 font-medium">Gemini AI</span> + <span className="text-cyan-400 font-medium">Advanced NLP</span>
           </p>
         </div>
       </div>

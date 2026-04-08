@@ -58,6 +58,16 @@ export default function Analytics() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Top Explanation */}
+      <div className="glass-card p-6 border-cyan-500/30 shadow-lg shadow-cyan-500/5">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">
+          <span className="text-2xl">📊</span> What is Thread Analytics?
+        </h2>
+        <p className="text-gray-300 mt-2 text-sm leading-relaxed">
+          Thread Analytics breaks down any Reddit discussion to show you exactly where users lose interest. By pasting a Reddit URL, you can visualize engagement drop-offs layer by layer, identify problematic comments, and drill down into sentiment to see what works and what doesn't.
+        </p>
+      </div>
+
       {/* Input */}
       <div className="glass-card p-6">
         <h2 className="text-base font-semibold text-white mb-1">Thread Analysis</h2>

@@ -2,9 +2,9 @@ import { useLocation } from 'react-router-dom';
 import useStore from '../../store/useStore';
 
 const titles = {
-  '/dashboard/research': { title: 'Smart Topic Research Engine', subtitle: 'Fetch trending context + score hooks with Claude AI' },
+  '/dashboard/research': { title: 'Smart Topic Research Engine', subtitle: 'Fetch trending context + score hooks with Gemini AI' },
   '/dashboard/analytics': { title: 'Thread Analytics Dashboard', subtitle: 'Drop-off analysis + D3 visualization per tweet' },
-  '/dashboard/defense': { title: 'AI Comment Defense System', subtitle: 'Detoxify pipeline → strategy engine → Claude replies' },
+  '/dashboard/defense': { title: 'AI Comment Defense System', subtitle: 'NLP pipeline → strategy engine → Gemini replies' },
 };
 
 export default function Navbar() {
