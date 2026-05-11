@@ -1,6 +1,6 @@
 # ThreadIQ
 
-> AI-Powered Thread Analytics, Hook Optimization & Toxic Reply Defense System for X Creators
+> AI-Powered Thread Analytics, Hook Optimization & Toxic Reply Defense System for Reddit Creators
 
 **🔥 Live Demo:** [https://reddit-iq-vfca.vercel.app](https://reddit-iq-vfca.vercel.app)
 
