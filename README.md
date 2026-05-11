@@ -26,27 +26,13 @@ cd frontend
 npm install
 ```
 
-**Python microservice:**
-```bash
-cd python-service
-pip install -r requirements.txt
-```
-
 ### 3. Start everything
-```bash
-# From project root — launches all 3 services
-start.bat
-```
 
-Or manually:
 ```bash
 # Terminal 1
-cd python-service && python app.py
-
-# Terminal 2
 cd backend && npm run dev
 
-# Terminal 3
+# Terminal 2
 cd frontend && npm run dev
 ```
 
@@ -57,7 +43,6 @@ cd frontend && npm run dev
 |---------|-----|
 | Frontend | http://localhost:5173 |
 | Backend | http://localhost:4000 |
-| Python Microservice | http://localhost:5001 |
 
 ---
 
@@ -66,7 +51,8 @@ cd frontend && npm run dev
 | Key | Where to get it |
 |-----|----------------|
 | `GOOGLE_CLIENT_ID` / `SECRET` | [Google Cloud Console](https://console.cloud.google.com) → APIs → OAuth 2.0 |
-| `CLAUDE_API_KEY` | [Anthropic Console](https://console.anthropic.com) |
+| `GEMINI_API_KEY` | [Google AI Studio](https://aistudio.google.com) → Get API Key |
+| `HUGGINGFACE_API_KEY` | [HuggingFace](https://huggingface.co/settings/tokens) → New token → Inference Providers |
 | `X_BEARER_TOKEN` | [X Developer Portal](https://developer.x.com) |
 | `DATABASE_URL` | [Neon](https://neon.tech) → Create project → Connection string |
 
@@ -84,7 +70,7 @@ threadiq/
 ├── backend/           Node.js + Express + Passport.js
 │   └── src/
 │       ├── routes/    auth, research, analytics, defense
-│       ├── services/  xApiService, claudeService, toxicityService, analyticsService
+│       ├── services/  xApiService, aiService, toxicityService, analyticsService
 │       ├── controllers/
 │       ├── middleware/ JWT auth
 │       └── db/        Neon PostgreSQL
@@ -93,8 +79,7 @@ threadiq/
 │       ├── pages/     Landing, Research, Analytics, Defense
 │       ├── components/ Layout, HookCard, BlueprintView, CommentCard, D3 charts
 │       └── store/     Zustand state
-└── python-service/    Flask + Detoxify NLP
-    └── app.py
+└── python-service/    (legacy — no longer active)
 ```
 
 ---
@@ -117,11 +102,8 @@ threadiq/
 - `GET /api/analytics/history` — Thread history
 
 ### Defense (Page 3)
-- `POST /api/defense/analyze` — `{ comments: [...] }` → toxicity + strategy
-- `POST /api/defense/reply` — `{ comment, strategy }` → Claude reply options
-
-### Python Service
-- `POST /analyze` — `{ comments: ["text1", "text2"] }` → Detoxify scores
+- `POST /api/defense/analyze` — `{ comments: [...] }` → toxicity scores + strategy
+- `POST /api/defense/reply` — `{ comment, strategy }` → Gemini AI reply options
 
 ---
 
@@ -129,8 +111,8 @@ threadiq/
 
 1. **Google OAuth + JWT in httpOnly cookies** — prevents XSS token theft
 2. **X API v2 hybrid pipeline** — fetches thread by conversation_id + author filter
-3. **Detoxify isolated in Python Flask microservice** — keeps ML inference separate from Node.js
+3. **HuggingFace `unitary/toxic-bert`** — real BERT transformer (trained on Jigsaw Toxic Comments dataset) called via cloud API, no server needed
 4. **Strategy engine** — maps (category × engagement) → (IGNORE / DEFEND / RESPOND)
-5. **Hook scoring** — Claude scores 5 angles; sorted by overall weighted score
+5. **Gemini AI reply generation** — scores hook angles and generates contextual reply options
 6. **Drop-off formula** — `drop_off[i] = (eng[i] - eng[i+1]) / eng[i]`
 7. **Impressions proxy** — `impressions = total_engagement / 0.03` when X API doesn't return raw impressions
