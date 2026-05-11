@@ -14,7 +14,7 @@ async function analyzeDefense(req, res, next) {
       return res.status(400).json({ error: 'comments array is required' });
     }
 
-    // Step 1: Send to Python microservice for Detoxify scoring
+    // Step 1: Score comments via HuggingFace unitary/toxic-bert (cloud API)
     const toxicityResults = await analyzeComments(comments.map(c => c.text));
 
     // Step 2: Apply category mapping + strategy engine
