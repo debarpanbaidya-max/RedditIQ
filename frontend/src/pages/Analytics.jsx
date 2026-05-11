@@ -52,8 +52,13 @@ export default function Analytics() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!threadUrl.trim()) return;
-    analyzeThread(threadUrl.trim());
+    const trimmed = threadUrl.trim();
+    if (!trimmed) return;
+    if (!trimmed.includes('/comments/')) {
+      useStore.setState({ analyticsError: '⚠️ Please paste a specific Reddit post URL — it must contain /comments/ in the link. Example: https://www.reddit.com/r/subreddit/comments/abc123/post_title/' });
+      return;
+    }
+    analyzeThread(trimmed);
   };
 
   return (
@@ -80,7 +85,7 @@ export default function Analytics() {
             className="input-field flex-1"
             placeholder="https://www.reddit.com/r/reactjs/comments/1gx8s..."
             value={threadUrl}
-            onChange={e => setThreadUrl(e.target.value)}
+            onChange={e => { setThreadUrl(e.target.value); useStore.setState({ analyticsError: null }); }}
             required
           />
           <button

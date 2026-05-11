@@ -48,14 +48,22 @@ async function fetchThread(postUrlOrId) {
   try {
     let url = postUrlOrId;
     if (!url.startsWith('http')) {
-      // If it's just an ID, assume it's a post ID (this is highly dependent on Reddit routing, best to use URL)
+      // If it's just an ID, assume it's a post ID
       url = `https://www.reddit.com/comments/${postUrlOrId}`;
+    }
+
+    // Validate: must be a post URL, not a subreddit/user/search page
+    if (!url.includes('/comments/')) {
+      throw Object.assign(
+        new Error('Please paste a specific Reddit post URL (it must contain /comments/ in the link), not a subreddit or profile page.'),
+        { status: 400 }
+      );
     }
 
     // Strip trailing slashes and query params, then add .json
     url = url.split('?')[0].replace(/\/$/, '') + '.json';
 
-    const response = await axios.get(url, { headers });
+    const response = await axios.get(url, { headers, timeout: 15000 });
 
     // Reddit returns an array of two items: [post_data, comments_data]
     const postData = response.data[0].data.children[0].data;
@@ -100,8 +108,14 @@ async function fetchThread(postUrlOrId) {
       tweets: [rootPost, ...parsedReplies],
     };
   } catch (err) {
+    // Re-throw our own validation errors with their original message
+    if (err.status === 400) throw err;
     console.error('Reddit Thread Fetch Error:', err.response?.data || err.message);
-    throw new Error('Failed to fetch Reddit thread/post.');
+    const status = err.response?.status;
+    if (status === 404) throw new Error('Reddit post not found. Make sure the URL is correct and the post is still live.');
+    if (status === 403) throw new Error('Reddit blocked this request. Try again in a moment.');
+    if (status === 429) throw new Error('Reddit rate limit hit. Please wait a few seconds and try again.');
+    throw new Error('Failed to fetch Reddit thread/post. Check the URL and try again.');
   }
 }
 

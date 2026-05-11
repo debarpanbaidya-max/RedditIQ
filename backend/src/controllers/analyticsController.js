@@ -64,6 +64,9 @@ async function analyzeThread(req, res, next) {
       tweets: analyzedTweets,
     });
   } catch (err) {
+    if (err.status) {
+      return res.status(err.status).json({ error: err.message });
+    }
     next(err);
   }
 }
