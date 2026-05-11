@@ -1,6 +1,7 @@
 export default function Landing() {
   const handleLogin = () => {
-    window.location.href = '/auth/google';
+    const backendUrl = import.meta.env.VITE_API_URL || '';
+    window.location.href = `${backendUrl}/auth/google`;
   };
 
   return (
