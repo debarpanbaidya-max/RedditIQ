@@ -2,6 +2,8 @@
 
 > AI-Powered Thread Analytics, Hook Optimization & Toxic Reply Defense System for X Creators
 
+**🔥 Live Demo:** [https://reddit-iq-vfca.vercel.app](https://reddit-iq-vfca.vercel.app)
+
 ---
 
 ## 🚀 Quick Start
@@ -38,11 +40,11 @@ cd frontend && npm run dev
 
 ---
 
-## 🌐 Service Ports
-| Service | URL |
-|---------|-----|
-| Frontend | http://localhost:5173 |
-| Backend | http://localhost:4000 |
+## 🌐 Service URLs
+| Environment | Frontend | Backend |
+|-------------|----------|---------|
+| **Production** | `https://reddit-iq-vfca.vercel.app` | `https://threadiq-backend.onrender.com` |
+| **Local** | `http://localhost:5173` | `http://localhost:4000` |
 
 ---
 
@@ -59,8 +61,8 @@ cd frontend && npm run dev
 ### Google OAuth Setup
 1. Go to Google Cloud Console → Credentials
 2. Create OAuth 2.0 Client ID (Web application)
-3. Add `http://localhost:4000/auth/google/callback` as authorized redirect URI
-4. Add `http://localhost:5173` as authorized JavaScript origin
+3. Add `https://threadiq-backend.onrender.com/auth/google/callback` (and `http://localhost:4000/...` for local testing) as authorized redirect URIs
+4. Add `https://reddit-iq-vfca.vercel.app` (and `http://localhost:5173` for local testing) as authorized JavaScript origins
 
 ---
 
