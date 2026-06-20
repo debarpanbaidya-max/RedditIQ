@@ -3,6 +3,22 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash'; // High speed, good reasoning, generous free tier
 
+async function generateTrendingContext(topic) {
+  const model = genAI.getGenerativeModel({ model: MODEL });
+
+  const prompt = `You are a Reddit data analyst. Simulate what the top 8 Reddit posts about the following topic look like right now, based on your knowledge of current discussions, upvote patterns, and community sentiment.
+
+TOPIC: "${topic}"
+
+For each simulated post, write a realistic title + brief body excerpt and estimate upvotes. Format exactly as:
+[<upvotes> upvotes] <title>\n<body excerpt (1-2 sentences)>
+
+Return ONLY the 8 posts in plain text, one per line-group, no extra commentary.`;
+
+  const result = await model.generateContent(prompt);
+  return result.response.text().trim();
+}
+
 async function generateHooksAndBlueprint(topic, stance, trendingContext) {
   const model = genAI.getGenerativeModel({ model: MODEL });
 
@@ -93,4 +109,4 @@ Respond ONLY with valid JSON with no markdown formatting or extra text outside t
   return JSON.parse(jsonMatch[0]);
 }
 
-module.exports = { generateHooksAndBlueprint, generateReplyOptions };
+module.exports = { generateHooksAndBlueprint, generateReplyOptions, generateTrendingContext };

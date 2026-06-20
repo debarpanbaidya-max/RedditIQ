@@ -1,5 +1,5 @@
 const { searchPosts } = require('../services/redditApiService');
-const { generateHooksAndBlueprint } = require('../services/aiService');
+const { generateHooksAndBlueprint, generateTrendingContext } = require('../services/aiService');
 const { pool } = require('../db');
 
 /**
@@ -14,15 +14,22 @@ async function analyzeResearch(req, res, next) {
       return res.status(400).json({ error: 'topic and stance are required' });
     }
 
-    // Step 1: Fetch trending posts on this topic
-    const trendingPosts = await searchPosts(`${topic}`, 20);
-
-    // Step 2: Build context string for AI
-    const trendingContext = trendingPosts
-      .sort((a, b) => (b.likes + b.retweets) - (a.likes + a.retweets))
-      .slice(0, 10)
-      .map(t => `[${t.likes} upvotes] ${t.text}`)
-      .join('\n');
+    // Step 1: Fetch trending posts — fall back to AI-generated context if Reddit is unavailable
+    let trendingContext = '';
+    let trendingCount = 0;
+    try {
+      const trendingPosts = await searchPosts(`${topic}`, 20);
+      trendingCount = trendingPosts.length;
+      trendingContext = trendingPosts
+        .sort((a, b) => (b.likes + b.retweets) - (a.likes + a.retweets))
+        .slice(0, 10)
+        .map(t => `[${t.likes} upvotes] ${t.text}`)
+        .join('\n');
+    } catch (redditErr) {
+      console.warn('[Research] Reddit fetch failed, using Gemini-generated context:', redditErr.message);
+      trendingContext = await generateTrendingContext(topic);
+      trendingCount = 0;
+    }
 
     // Step 3: Generate hooks + blueprint via Claude
     const analysis = await generateHooksAndBlueprint(topic, stance, trendingContext);
@@ -50,7 +57,7 @@ async function analyzeResearch(req, res, next) {
       hooks: analysis.hooks,
       blueprint: analysis.blueprint,
       virality_patterns: analysis.virality_patterns,
-      trending_count: trendingPosts.length,
+      trending_count: trendingCount,
     });
   } catch (err) {
     if (err.status === 429) {
