@@ -1,16 +1,62 @@
 const axios = require('axios');
 
-// Basic User-Agent is highly recommended by Reddit API to avoid 429 Too Many Requests
-const headers = {
-  'User-Agent': 'NodeJS:RedditIQ:v1.0 (by /u/debarpan)',
-};
+// ── Reddit OAuth token cache ──────────────────────────────────────────────────
+let _accessToken = null;
+let _tokenExpiresAt = 0;
+
+const USER_AGENT = 'NodeJS:RedditIQ:v1.0 (by /u/debarpan)';
+
+/**
+ * Get a valid OAuth access token using Application-Only (client_credentials) flow.
+ * Tokens are cached in memory and refreshed when they expire.
+ */
+async function getAccessToken() {
+  if (_accessToken && Date.now() < _tokenExpiresAt - 60_000) {
+    return _accessToken;
+  }
+
+  const clientId = process.env.REDDIT_CLIENT_ID;
+  const clientSecret = process.env.REDDIT_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    throw new Error('REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET must be set in environment variables.');
+  }
+
+  const response = await axios.post(
+    'https://www.reddit.com/api/v1/access_token',
+    'grant_type=client_credentials',
+    {
+      auth: { username: clientId, password: clientSecret },
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    }
+  );
+
+  _accessToken = response.data.access_token;
+  _tokenExpiresAt = Date.now() + response.data.expires_in * 1000;
+  return _accessToken;
+}
+
+/**
+ * Build authenticated headers for oauth.reddit.com requests.
+ */
+async function authHeaders() {
+  const token = await getAccessToken();
+  return {
+    'Authorization': `Bearer ${token}`,
+    'User-Agent': USER_AGENT,
+  };
+}
 
 /**
  * Search recent posts for a given query
  */
 async function searchPosts(query, maxResults = 25) {
   try {
-    const response = await axios.get('https://www.reddit.com/search.json', {
+    const headers = await authHeaders();
+    const response = await axios.get('https://oauth.reddit.com/search', {
       headers,
       params: {
         q: query,
@@ -29,7 +75,7 @@ async function searchPosts(query, maxResults = 25) {
         text: `${post.title}\n\n${post.selftext}`.trim().substring(0, 500) + '...',
         author: { name: post.author, username: post.author },
         likes: post.ups,
-        retweets: 0, // Reddit doesn't have retweets, keeping for schema compat
+        retweets: 0,
         replies: post.num_comments,
         impressions: post.view_count || 0,
         created_at: new Date(post.created_utc * 1000).toISOString(),
@@ -48,7 +94,6 @@ async function fetchThread(postUrlOrId) {
   try {
     let url = postUrlOrId;
     if (!url.startsWith('http')) {
-      // If it's just an ID, assume it's a post ID
       url = `https://www.reddit.com/comments/${postUrlOrId}`;
     }
 
@@ -60,10 +105,12 @@ async function fetchThread(postUrlOrId) {
       );
     }
 
-    // Strip trailing slashes and query params, then add .json
-    url = url.split('?')[0].replace(/\/$/, '') + '.json';
+    // Convert to oauth.reddit.com path (strip domain, keep path + .json)
+    const path = url.replace(/^https?:\/\/(www\.)?reddit\.com/, '').split('?')[0].replace(/\/$/, '');
+    const oauthUrl = `https://oauth.reddit.com${path}.json`;
 
-    const response = await axios.get(url, { headers, timeout: 15000 });
+    const headers = await authHeaders();
+    const response = await axios.get(oauthUrl, { headers, timeout: 15000 });
 
     // Reddit returns an array of two items: [post_data, comments_data]
     const postData = response.data[0].data.children[0].data;
@@ -125,10 +172,9 @@ async function fetchThread(postUrlOrId) {
  */
 async function fetchReplies(tweetId, postUrlFull) {
   try {
-    // If they click on a comment in analytics, we can fetch sub-comments. 
-    // For simplicity of Reddit pivot, we'll just fetch the main thread again and get all comments.
-    const url = `https://www.reddit.com/comments/${postUrlFull}.json`;
-    const response = await axios.get(url, { headers });
+    const oauthUrl = `https://oauth.reddit.com/comments/${postUrlFull}.json`;
+    const headers = await authHeaders();
+    const response = await axios.get(oauthUrl, { headers });
     
     // Flatten comment tree slightly to find replies
     const commentsData = response.data[1].data.children;
